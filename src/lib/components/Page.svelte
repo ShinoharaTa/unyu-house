@@ -14,7 +14,6 @@ import Timeline from './Timeline.svelte';
 let pool: SimplePool = new SimplePool();
 let subNotes: Sub<7|40|41|42|10001>;
 let relaysToUse: {[key: string]: GetRelays};
-let theme: string;
 let currentChannelId: string | null;
 let currentPubkey: string | null;
 let loginPubkey: string;
@@ -31,9 +30,6 @@ let unsubscribeApplyRelays: Unsubscriber | null;
 let scrolled: boolean = false;
 storedRelaysToUse.subscribe((value) => {
 	relaysToUse = value;
-});
-storedTheme.subscribe((value) => {
-	theme = value;
 });
 storedCurrentChannelId.subscribe((value) => {
 	currentChannelId = value;
@@ -282,13 +278,12 @@ $: titleString = currentChannelId ? `${channels.find(v => v.event.id === current
 
 <svelte:head>
 	<title>{titleString}</title>
-	<link rel="stylesheet" href="{theme || urlDefaultTheme}">
 </svelte:head>
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div id="container" on:click={hidePostBar}>
 	<Header {title} />
-	<Sidebar {pool} {theme} {relaysToUse} {loginPubkey} {channels} {profs} {importRelays} {pinList} {muteList} {wordList} />
+	<Sidebar {pool} theme=light {relaysToUse} {loginPubkey} {channels} {profs} {importRelays} {pinList} {muteList} {wordList} />
 	<main>
 	{#if currentChannelId}
 		{@const channel = channels.find(v => v.event.id === currentChannelId)}
@@ -335,20 +330,11 @@ $: titleString = currentChannelId ? `${channels.find(v => v.event.id === current
 		<h2>Error</h2>
 	{/if}
 		<Timeline {pool} relaysToWrite={Object.entries(relaysToUse).filter(v => v[1].write).map(v => v[0])} {notes} {notesQuoted} {profs} {channels} {loginPubkey} {muteList} {wordList} {favList} {resetScroll} />
-	{#if currentChannelId && loginPubkey}
-		{@const channel = channels.find(channel => channel.event.id === currentChannelId)}
-		{#if channel !== undefined}
-		<div id="input" class="show" on:click|stopPropagation={()=>{}}>
-			<textarea id="input-text" bind:value={inputText} disabled={!loginPubkey}></textarea>
-			<button on:click={() => {callSendMessage(channel.event)}} disabled={!loginPubkey || !inputText}>Post</button>
-		</div>
-		<button id="show-post-bar" on:click|stopPropagation={showPostBar}><svg><use xlink:href="/pencil-create.svg#pencil"></use></svg></button>
-		{/if}
-	{/if}
+		
 	</main>
 </div>
 
-<style>
+<!-- <style>
 :global(html) {
 	width: 100%;
 	height: 100%;
@@ -417,4 +403,4 @@ main {
 :global(#container.light #show-post-bar) {
 	fill: black;
 }
-</style>
+</style> -->

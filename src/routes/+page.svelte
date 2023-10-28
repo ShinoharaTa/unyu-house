@@ -13,4 +13,8 @@ onMount(() => {
 });
 </script>
 
+<!-- <svelte:head>
+	<link rel="stylesheet" href="{theme || urlDefaultTheme}">
+</svelte:head> -->
+
 <Page />
